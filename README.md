@@ -15,4 +15,5 @@ This folder contains different tricks allowed in C that can prove to be very use
 - jumplabels	: Store all the labels inside an array or jump from inner to outer function
 - pointers	: Use macros to initialize and get values from structures
 - zeroarray	: Add extra buffer to the end of the structure and reduce its size
+- func_generator: Example of dynamically create functions
 ```
