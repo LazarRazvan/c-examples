@@ -12,25 +12,17 @@
 /* Get the length of an array */
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof(*(x)))
 
-int x;
 /* Expose how you can walk through labels that are stored inside an array */
-void jump_labels_array(int n)
+void jump_labels_array(void)
 {
-	__label__ label0;
-	void g(int a) {
-		goto label0;
-	}
-	static int h;
 	int label = 0;
 	const void * jumptable[] = {
 		&&label1,
 		&&label2,
 		&&label3,
 		&&label4,
-		&&label5,
-		&&label0
+		&&label5
 	};
-	int arr[n + 5];
 
 select_label:
 	if (label == 5)
@@ -53,16 +45,36 @@ label5:
 	printf("label5\n");
 	goto select_label;
 out:
-	arr[0] = arr[0];
-	printf("out");
-	g(++h);
-	printf("never happens");
-label0:
-	;
+	printf("out\n");
+}
+
+/* Jump from an inner function */
+void jump_inner_func(void)
+{
+	__label__ out;
+
+	printf("Enter in %s\n", __func__);
+	void inner_function(void)
+	{
+		printf("Enter in %s\n", __func__);
+		goto out;
+		printf("Exit %s\n", __func__);
+	}
+	/* Although we call the inner function without leaving it (goto is called)
+	 * its stack frame will be distroyed when the outer function will return,
+	 * when both stack frames will be distroyed
+	 */
+	inner_function();
+
+out:
+	printf("Exit %s\n", __func__);
+
 }
 
 int main()
 {
-	jump_labels_array(4);
+	jump_labels_array();
+	printf("\n");
+	jump_inner_func();
 	return 0;
 }
