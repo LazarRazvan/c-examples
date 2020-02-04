@@ -16,4 +16,5 @@ This folder contains different tricks allowed in C that can prove to be very use
 - pointers	: Use macros to initialize and get values from structures
 - zeroarray	: Add extra buffer to the end of the structure and reduce its size
 - func_generator: Example of dynamically create functions
+- endianess	: Detect endianess type for a platform
 ```
