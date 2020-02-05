@@ -6,7 +6,7 @@ Useful tricks and examples for C language based on my experience.
 
 This folder contains different tricks allowed in C that can prove to be very useful. This are based on my work as a Linux kernel developer and can be found in different ways in the kernel sources. This tricks are made because memory optimizations and other mechanisms are required.
 
-### What you can find here?
+### What can you find here?
 
 ```
 - const		: How to use const identifier on pointer and what does it mean
@@ -17,4 +17,14 @@ This folder contains different tricks allowed in C that can prove to be very use
 - zeroarray	: Add extra buffer to the end of the structure and reduce its size
 - func_generator: Example of dynamically create functions
 - endianess	: Detect endianess type for a platform
+```
+
+## Data structures
+
+Understanding the layout of structures, how can you shrink structures. Explain concepts like bit-fields strucutres and union.
+
+### What can you find here?
+
+```
+- helper	: Structures, unions and bitfields explained
 ```
