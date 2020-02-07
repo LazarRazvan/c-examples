@@ -19,7 +19,7 @@ void start_communication(void)
 		write_to_pipe(&p_msg);
 		read_from_pipe(&p_msg);
 		display_msg(p_msg);
-	}	
+	}
 }
 
 int main()

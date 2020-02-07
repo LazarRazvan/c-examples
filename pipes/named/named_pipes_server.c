@@ -32,13 +32,13 @@ void start_communication(void)
 	int stop = 1;
 
 	while(stop) {
-		read_from_pipe(&p_msg);	
+		read_from_pipe(&p_msg);
 		display_msg(p_msg);
 		/* Check end of transmission */
 		stop = process_message(&p_msg);
 		display_msg(p_msg);
 		write_to_pipe(&p_msg);
-	}	
+	}
 }
 
 int main()
