@@ -25,4 +25,4 @@ struct pipe_msg {
 void display_msg(struct pipe_msg p_msg);
 int read_from_pipe(struct pipe_msg *p_msg);
 int write_to_pipe(const struct pipe_msg *p_msg);
-void create_message(struct pipe_msg *p_msg);
+void create_message(struct pipe_msg *p_msg, const char *msg);
