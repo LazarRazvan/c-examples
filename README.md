@@ -28,3 +28,14 @@ Understanding the layout of structures, how can you shrink structures. Explain c
 ```
 - helper	: Structures, unions and bitfields explained
 ```
+
+## Pipes
+
+Understand the use case of pipes. Anonymous pipes and named pipes
+
+### What can you find here?
+
+```
+- anonymous	: Pipes used to communicate between related processes
+- named		: This kind of pipes can be used both for related processes and independent ones.
+```
