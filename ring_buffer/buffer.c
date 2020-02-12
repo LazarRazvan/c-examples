@@ -31,7 +31,7 @@ struct ring_buffer * ring_buffer_init(size_t elem_size, size_t size)
 		r_buffer->buffer[i] = (void *) malloc(sizeof(void));
 		if (!r_buffer->buffer[i]) {
 			ON_ERR(errno);
-			goto out_err_1;
+			goto out_err_2;
 		}
 	}
 
@@ -42,6 +42,8 @@ struct ring_buffer * ring_buffer_init(size_t elem_size, size_t size)
 	r_buffer->state = BUFFER_EMPTY;
 
 	return r_buffer;
+out_err_2:
+	free(r_buffer->buffer);
 out_err_1:
 	free(r_buffer);
 out_err:
