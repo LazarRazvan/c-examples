@@ -18,6 +18,7 @@ This folder contains different tricks allowed in C that can prove to be very use
 - func_generator: Example of dynamically create functions
 - endianess	: Detect endianess type for a platform
 - giant		: Expose the differece between resident and virtual memory
+- null		: Hack null pointer exception (read/write on null)
 ```
 
 ## Data structures
