@@ -17,6 +17,7 @@ This folder contains different tricks allowed in C that can prove to be very use
 - zeroarray	: Add extra buffer to the end of the structure and reduce its size
 - func_generator: Example of dynamically create functions
 - endianess	: Detect endianess type for a platform
+- giant		: Expose the differece between resident and virtual memory
 ```
 
 ## Data structures
