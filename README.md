@@ -41,3 +41,13 @@ Understand the use case of pipes. Anonymous pipes and named pipes
 - anonymous	: Pipes used to communicate between related processes
 - named		: This kind of pipes can be used both for related processes and independent ones.
 ```
+
+## Ring buffer
+
+Implement a multi-threading and multi-processes ring buffer
+
+### What can you find here?
+
+```
+- ring_buffer_thread	: Ring buffer with support for multiple threads (readers/writers)
+```
