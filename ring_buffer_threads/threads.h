@@ -6,11 +6,11 @@
 
 #define MSG_SIZE	10
 #define	MSG		"Hello"
-#define RING_SIZE	1024	/* order */
+#define RING_SIZE	32	/* multiple of 2 (for overflow situations) */
 #define NUM_WRITES	10	/* number of messages each writer will add */
 
 struct struct_t {
-	int thread_id;
+	unsigned long thread_id;
 	char msg[MSG_SIZE];
 };
 

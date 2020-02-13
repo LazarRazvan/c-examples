@@ -32,6 +32,7 @@ writing and reading threads.
 By default ```(NUM_WRITES)``` each writer will add 10 messages to ring buffer. You can change this value inside
 ```threads.h```, alongisde with ```RING_SIZE(ring buffer size)```.
 
+Remove ```PRINT``` content in ```Makefile``` if you don't want to see the messages. (reduce the performance)
 
 ## Synchronization
 

@@ -21,8 +21,11 @@ static void *readers_function(void *data)
 			}
 			++read_messages;
 			pthread_mutex_unlock(&readers_mutex);
-			while (ring_buffer_get(r_buf, &w_struct)) {
-			}
+			while (ring_buffer_get(r_buf, &w_struct));
+#ifdef PRINT
+			printf("%-30lu%-30lu%-30s\n", pthread_self(),
+						    w_struct.thread_id, w_struct.msg);
+#endif
 	}
 
 	return NULL;
@@ -40,8 +43,7 @@ static void *writers_function(void *data)
 	memcpy(w_struct.msg, MSG, MSG_SIZE);
 
 	for (i = 0; i < NUM_WRITES; i++) {
-		while (ring_buffer_put(r_buf, &w_struct)) {
-		}
+		while (ring_buffer_put(r_buf, &w_struct));
 	}
 
 	return NULL;
@@ -53,7 +55,7 @@ int main(int argc, char **argv)
 	int i, r_number, w_number, err = 0;
 	pthread_t *writers, *readers;
 
-	r_buf = ring_buffer_init(sizeof(int), 100);
+	r_buf = ring_buffer_init(sizeof(struct struct_t), RING_SIZE);
 	if (!r_buf)
 		return -1;
 
@@ -80,6 +82,10 @@ int main(int argc, char **argv)
 		goto out_err_1;
 	}
 
+#ifdef PRINT
+	/* pretty print informations from readers */
+	printf("%-30s%-30s%-30s\n", "READER", "WRITER_ID", "MSG");
+#endif
 	/* Start threads */
 	for (i = 0; i < w_number; i++) {
 		if (pthread_create(&writers[i], NULL, &writers_function, NULL)) {
