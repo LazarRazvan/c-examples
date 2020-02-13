@@ -1,3 +1,7 @@
+/* Ring buffer design
+ * Copyright (C) 2020 Lazar Razvan
+ */
+
 #include "threads.h"
 
 /*
@@ -7,13 +11,11 @@ static void *readers_function(void *data)
 {
 	int w_number;
 	struct struct_t w_struct;
-	
+
 	w_number = *(int *)data;
-//	printf("%d\n", w_number);
 	for (;;) {
 			pthread_mutex_lock(&readers_mutex);
 			if (read_messages == w_number * NUM_WRITES) {
-				//printf("read_message break: %d\n", read_messages);
 				pthread_mutex_unlock(&readers_mutex);
 				break;
 			}
@@ -38,7 +40,6 @@ static void *writers_function(void *data)
 	memcpy(w_struct.msg, MSG, MSG_SIZE);
 
 	for (i = 0; i < NUM_WRITES; i++) {
-		//printf("%lu i = %d\n", pthread_self(), i);
 		while (ring_buffer_put(r_buf, &w_struct)) {
 		}
 	}

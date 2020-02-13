@@ -1,3 +1,7 @@
+/* Ring buffer design
+ * Copyright (C) 2020 Lazar Razvan
+ */
+
 #include "buffer.h"
 
 #define MSG_SIZE	10
