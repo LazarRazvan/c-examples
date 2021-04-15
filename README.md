@@ -10,6 +10,7 @@ This folder contains different tricks allowed in C that can prove to be very use
 
 ```
 - const		: How to use const identifier on pointer and what does it mean
+- duff		: Manual loop unrolling technique
 - funcarray	: Initialize and use an array of functions
 - arrayinit	: Initialize slices of an array at declaration time
 - jumplabels	: Store all the labels inside an array or jump from inner to outer function
