@@ -45,6 +45,7 @@ int graph_node_level(graph_t *, unsigned char , char *);
 int graph_dfs(graph_t *, unsigned char);
 int graph_detect_cycle(graph_t *, bool *);
 int graph_max_length(graph_t *, int *);
+int graph_nlength_cycles(graph_t *graph, int n);
 
 /**
  * Bellman-Ford.

@@ -307,6 +307,55 @@ error:
 	return rv;
 }
 
+static int __graph_nlength_cycles_test(void)
+{
+	int rv = 0;
+	graph_t *graph = NULL;
+
+	printf("==============================================================\n");
+	printf("%s\n", __func__);
+	printf("==============================================================\n");
+
+	/****************************************************************
+	 * Graph1 create.
+	 *
+	 *      0  -  1
+	 *      \ ____/  \
+	 *      /\        2
+	 *      | ----\  /
+	 *      4  -  3
+	 ***************************************************************/
+	graph = graph_create(5);
+	if (!graph) {
+		rv = -1; goto error;
+	}
+
+	// Add edges
+	assert(!graph_add_undirected_edge(graph, 0, 1));
+	assert(!graph_add_undirected_edge(graph, 0, 3));
+	assert(!graph_add_undirected_edge(graph, 1, 2));
+	assert(!graph_add_undirected_edge(graph, 1, 4));
+	assert(!graph_add_undirected_edge(graph, 2, 3));
+	assert(!graph_add_undirected_edge(graph, 3, 4));
+
+	/****************************************************************
+	 * Detect number of n length cycles for graph.
+	 ***************************************************************/
+	printf("Graph has %d cycles of length 4\n", graph_nlength_cycles(graph, 4));
+
+	/****************************************************************
+	 * Destroy graph.
+	 ***************************************************************/
+	graph_destroy(graph);
+
+	return 0;
+
+error:
+	printf("[%s] Error: %d\n", __func__, rv);
+
+	return rv;
+}
+
 /******************************************************************************/
 
 int main()
@@ -346,6 +395,13 @@ int main()
 	 */
 	if (__graph_bellman_ford_test()) {
 		rv = -5; goto error;
+	}
+
+	/**
+	 * n length cycles.
+	 */
+	if (__graph_nlength_cycles_test()) {
+		rv = -6; goto error;
 	}
 
 	return 0;

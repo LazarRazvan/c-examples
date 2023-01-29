@@ -499,6 +499,82 @@ int graph_max_length(graph_t *graph, int *max_len)
 	return 0;
 }
 
+static void __graph_nlength_cycles(graph_t *graph, unsigned char src,
+									unsigned char curr, int len, int *cycles_no)
+{
+	/****************************************************************
+	 * Mark current node as visited in dfs.
+	 ***************************************************************/
+	graph->visited[curr] = 1;
+
+	/****************************************************************
+	 * Path of "len" length found.
+	 *
+	 * Check if there is an edge to source node and count the cycle.
+	 * Note that node is marked as unvisited to be able to be visited
+	 * again.
+	 ***************************************************************/
+	if (len == 0) {
+		graph->visited[curr] = 0;
+
+		if (graph->mat[curr][src])
+			(*cycles_no)++;
+
+		return;
+	}
+
+
+
+	/****************************************************************
+	 * Perform dfs and decrease length for next recursion step. When
+	 * returning from recursion, we mark the node as unvisited to be
+	 * able to found another path.
+	 ***************************************************************/
+	for (int i = 0; i < graph->nodes; i++) {
+		if (!graph->visited[i] && graph->mat[curr][i]) {
+			__graph_nlength_cycles(graph, src, i, len - 1, cycles_no);
+		}
+	}
+
+	graph->visited[curr] = 0;
+}
+
+/**
+ * Given an undirected and connected graph and a number n, count total number
+ * of cycles of length n in the graph. A cycle of length n simply means that
+ * the cycle contains n vertices and n edges.
+ *
+ * graph	: Graph data structure.
+ * n		: Length of a cycle.
+ *
+ * Return the number of cycles of n length found in the graph.
+ */
+int graph_nlength_cycles(graph_t *graph, int n)
+{
+	int cycles_no = 0;
+
+	/****************************************************************
+	 * Reset visited array.
+	 ***************************************************************/
+	memset(graph->visited, 0, graph->nodes * sizeof(unsigned char));
+
+	/****************************************************************
+	 * We need to compute cycles of length n. This can be reduced to
+	 * finding paths of length (n-1) where destination node has an
+	 * edge to source node.
+	 ***************************************************************/
+	for (int i = 0; i < graph->nodes - (n - 1); i++) {
+		__graph_nlength_cycles(graph, i, i, n-1, &cycles_no);
+
+		graph->visited[i] = true;
+	}
+
+	/****************************************************************
+	 * Each cycle is counted twice.
+	 ***************************************************************/
+	return cycles_no / 2;
+}
+
 /******************************** BELLMAN FORD ********************************/
 /**
  * Bellman Ford Algorithm.
