@@ -7,8 +7,182 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stddef.h>
 
 #include "trie/trie.h"
+
+
+/********************************** HELPERS **********************************/
+
+/**
+ * Recursivity logic to print all leafs starting by a given node.
+ *
+ * @node: Trie starting node.
+ */
+static void
+__trie_recursive_print_leafs(trie_node_t *node, int level, char *word)
+{
+	// print word for leafs
+	if (node->is_leaf)
+		printf("%.*s\n", level, word);
+
+	for (int i = 0; i < CHILDREN_NO; i++) {
+		if (node->children[i]) {
+			word[level] = i + 'a';
+			__trie_recursive_print_leafs(node->children[i], level + 1, word);
+		}
+	}
+}
+
+/**
+ * Recursivity logic to create list of all leafs starting by a given node.
+ *
+ * @node: Trie starting node.
+ */
+static int
+__trie_recursive_get_leafs(trie_node_t *node, int level, char *word,
+							kslist_head_t *list)
+{
+	word_entry_t *entry;
+
+	// create and add entries for leafs
+	if (node->is_leaf) {
+		word[level] = '\0';
+
+		entry = trie_word_entry_create(word);
+		if (!entry)
+			return -1;
+
+		kslist_push_tail(list, &entry->node);
+	}
+
+	for (int i = 0; i < CHILDREN_NO; i++) {
+		if (node->children[i]) {
+			word[level] = i + 'a';
+			if (__trie_recursive_get_leafs(node->children[i], level + 1, word,
+											list))
+				return -1;
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * Recursivity logic to print all leafs based on a regex.
+ *
+ * @node: Trie starting node.
+ */
+static int
+__trie_recursive_get_regex(trie_node_t *node, trie_regex_t *regex,
+							kslist_head_t *list, int level, char *word)
+{
+	word_entry_t *entry;
+	letter_regex_t *letter_regex;
+
+
+	// stop if word length is exceeded (print if a leaf is found)
+	if (level == regex->word_len) {
+		if (node->is_leaf) {
+			word[level] = '\0';
+
+			entry = trie_word_entry_create(word);
+			if (!entry)
+				return -1;
+
+			kslist_push_tail(list, &entry->node);
+		}
+
+		return 0;
+	}
+
+	// get regex for current level
+	letter_regex = &regex->word_list[level];
+
+	// iterate in node children and match the regex
+	for (int i = 0; i < CHILDREN_NO; i++) {
+		if (!node->children[i])
+			continue;
+
+		// regex match
+		switch (letter_regex->opt) {
+		case VAL_IN_LIST:
+			if (letter_regex->mask & (1 << i)) {
+				word[level] = i + 'a';
+				if (__trie_recursive_get_regex(node->children[i], regex, list,
+											level + 1, word))
+					return -1;
+			}
+
+			break;
+		case VAL_NOT_IN_LIST:
+			if (!(letter_regex->mask & (1 << i))) {
+				word[level] = i + 'a';
+				if (__trie_recursive_get_regex(node->children[i], regex, list,
+											level + 1, word))
+					return -1;
+			}
+
+			break;
+		default:
+			assert(0);	// invalid option
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * Recursivity logic to get all leafs based on a regex.
+ *
+ * @node: Trie starting node.
+ */
+static void
+__trie_recursive_print_regex(trie_node_t *node, trie_regex_t *regex, int level,
+							char *word)
+{
+	letter_regex_t *letter_regex;
+
+
+	// stop if word length is exceeded (print if a leaf is found)
+	if (level == regex->word_len) {
+		if (node->is_leaf)
+			printf("%.*s\n", level, word);
+
+		return;
+	}
+
+	// get regex for current level
+	letter_regex = &regex->word_list[level];
+
+	// iterate in node children and match the regex
+	for (int i = 0; i < CHILDREN_NO; i++) {
+		if (!node->children[i])
+			continue;
+
+		// regex match
+		switch (letter_regex->opt) {
+		case VAL_IN_LIST:
+			if (letter_regex->mask & (1 << i)) {
+				word[level] = i + 'a';
+				__trie_recursive_print_regex(node->children[i], regex,
+											level + 1, word);
+			}
+
+			break;
+		case VAL_NOT_IN_LIST:
+			if (!(letter_regex->mask & (1 << i))) {
+				word[level] = i + 'a';
+				__trie_recursive_print_regex(node->children[i], regex,
+											level + 1, word);
+			}
+
+			break;
+		default:
+			assert(0);	// invalid option
+		}
+	}
+}
 
 
 /******************************** PUBLIC API *********************************/
@@ -53,6 +227,53 @@ void trie_node_destroy(trie_node_t *node)
 
 	free(node);
 }
+
+
+/**
+ * Create a word entry for words list.
+ *
+ * @word: String to be saved in word entry (NULL terminated).
+ *
+ * Return new allocated entry on success and NULL otherwise.
+ */
+word_entry_t *trie_word_entry_create(char *word)
+{
+	word_entry_t *entry;
+
+	//
+	entry = (word_entry_t *)malloc(sizeof(word_entry_t));
+	if (!entry)
+		goto error;
+
+	//
+	entry->word = strdup(word);
+	if (!entry->word)
+		goto free_entry;
+
+	return entry;
+
+free_entry:
+	free(entry);
+
+error:
+	return NULL;
+}
+
+
+/**
+ * Destroy a word entry for words list.
+ *
+ * @entry: Entry to be destroyd.
+ */
+void trie_word_entry_destroy(word_entry_t *entry)
+{
+
+	free(entry->word);
+	free(entry);
+}
+
+
+/*****************************************************************************/
 
 /**
  * Insert an entry in a trie.
@@ -147,6 +368,9 @@ trie_node_t *trie_delete(trie_node_t *root, char *str)
 	return root;
 }
 
+
+/*****************************************************************************/
+
 /**
  * Search longest prefix for a given string in a trie.
  *
@@ -197,6 +421,164 @@ err:
 }
 
 
+/*****************************************************************************/
+
+/**
+ * Create all words (leafs) list in a trie by a given prefix.
+ *
+ * @root: Trie root
+ * @str: Lookup prefix.
+ * @list: List of words filled in by function.
+ *
+ * Return 0 on success (and fill in the list) or <0 on error.
+ */
+int trie_get_leafs_by_prefix(trie_node_t *root, char *str, kslist_head_t *list)
+{
+	int i = 0;
+	uint8_t ch;
+	trie_node_t *tmp;
+	word_entry_t *entry;
+	char word[MAX_WORD_LEN];
+	kslist_node_t *it, *aux;
+
+	if (!root)
+		goto error;
+
+	// if string is null, recursive print all leafs in trie
+	if (!str)
+		goto recursive_lookup;
+
+	// move to last node in trie by the prefix
+	tmp = root;
+	for (i = 0; i < strlen(str); i++) {
+		word[i] = str[i];
+		ch = str[i] - 'a';
+
+		//
+		if (!tmp->children[ch])
+			goto error;
+
+		tmp = tmp->children[ch];
+	}
+
+
+recursive_lookup:
+	// recursive get all words after prefix
+	if (__trie_recursive_get_leafs(tmp, i, word, list))
+		goto destroy_list;
+
+	return 0;
+
+destroy_list:
+	kslist_for_each_safe(aux, it, list) {
+		entry = container_of(aux, word_entry_t, node);
+		trie_word_entry_destroy(entry);
+	}
+
+error:
+	return -1;
+}
+
+
+/**
+ * Create all words (leafs) list in a trie by a given regex.
+ *
+ * @root: Trie root
+ * @regex: Lookup regex.
+ * @list: List of words filled in by function.
+ *
+ * Return 0 on success (and fill in the list) or <0 on error.
+ */
+int trie_get_leafs_by_regex(trie_node_t *root, trie_regex_t *regex,
+							kslist_head_t *list)
+{
+	word_entry_t *entry;
+	kslist_node_t *it, *aux;
+	char word[MAX_WORD_LEN];
+
+	if (!root || !regex || !regex->word_len)
+		return -1;
+
+	// recursive get all words after prefix
+	if (__trie_recursive_get_regex(root, regex, list, 0, word))
+		goto destroy_list;
+
+	return 0;
+
+destroy_list:
+	kslist_for_each_safe(aux, it, list) {
+		entry = container_of(aux, word_entry_t, node);
+		trie_word_entry_destroy(entry);
+	}
+
+	return -1;
+}
+
+
+/*****************************************************************************/
+
+/**
+ * Print all words (leafs) in a trie by a given prefix.
+ *
+ * @root: Trie root
+ * @str: Lookup prefix.
+ *
+ * Print all words(leafs) in a trie that start with a given prefix.
+ */
+void trie_print_leafs_by_prefix(trie_node_t *root, char *str)
+{
+	int i = 0;
+	uint8_t ch;
+	trie_node_t *tmp;
+	char word[MAX_WORD_LEN];
+
+	if (!root)
+		return;
+
+	// if string is null, recursive print all leafs in trie
+	if (!str)
+		goto recursive_lookup;
+
+	// move to last node in trie by the prefix
+	tmp = root;
+	for (i = 0; i < strlen(str); i++) {
+		word[i] = str[i];
+		ch = str[i] - 'a';
+
+		//
+		if (!tmp->children[ch])
+			return;
+
+		tmp = tmp->children[ch];
+	}
+
+recursive_lookup:
+	// recursive get all words after prefix
+	__trie_recursive_print_leafs(tmp, i, word);
+}
+
+/**
+ * Print all words (leafs) in a trie by a given regex.
+ *
+ * @root: Trie root.
+ * @regex: Lookup regex.
+ *
+ * Print all words(leafs) in a trie that match a given regex.
+ */
+void trie_print_leafs_by_regex(trie_node_t *root, trie_regex_t *regex)
+{
+	char word[MAX_WORD_LEN];
+
+	if (!root || !regex || !regex->word_len)
+		return;
+
+	// recursive get all words after prefix
+	__trie_recursive_print_regex(root, regex, 0, word);
+}
+
+
+/*****************************************************************************/
+
 /**
  * Search if a given string is found in a trie.
  *
@@ -225,6 +607,32 @@ bool trie_search(trie_node_t *root, char *str)
 
 	return tmp->is_leaf;
 }
+
+
+/*****************************************************************************/
+
+/**
+ * Convert a letter list to letter regex mask.
+ *
+ * @str: String letter list.
+ *
+ * Return a mask by enabling letter corresponding bit.
+ */
+uint32_t trie_letter_list_to_mask(char *str)
+{
+	uint32_t mask = 0;
+
+	if (!str)
+		return mask;
+
+	for (int i = 0; i < strlen(str); i++)
+		mask |= (1 << (str[i] - 'a'));
+
+	return mask;
+}
+
+
+/*****************************************************************************/
 
 /**
  * Print a trie data structure.
