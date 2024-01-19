@@ -12,6 +12,17 @@
 /******************************** PUBLIC API **********************************/
 
 /**
+ * Initialize list head.
+ *
+ * @head: Generic doubly linked list head.
+ */
+void kdlist_head_init(kdlist_head_t *head)
+{
+	head->next = head;
+	head->prev = head;
+}
+
+/**
  * Check if list is empty.
  *
  * @head: Generic doubly linked list head.

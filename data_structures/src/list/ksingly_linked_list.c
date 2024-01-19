@@ -13,6 +13,16 @@
 /******************************** PUBLIC API **********************************/
 
 /**
+ * Initialize list head.
+ *
+ * @head: Generic singly linked list head.
+ */
+void kslist_head_init(kslist_head_t *head)
+{
+	head->next = NULL;
+}
+
+/**
  * Check if list is empty.
  *
  * @head: Generic singly linked list head.

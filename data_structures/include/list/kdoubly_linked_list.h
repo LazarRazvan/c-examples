@@ -66,6 +66,9 @@ typedef void (*print_cb)(kdlist_node_t *);
 /******************************** PUBLIC API *********************************/
 
 //
+void kdlist_head_init(kdlist_head_t *head);
+
+//
 bool kdlist_is_empty(kdlist_head_t *head);
 bool kdlist_is_first(kdlist_head_t *head, kdlist_node_t *node);
 bool kdlist_is_last(kdlist_head_t *head, kdlist_node_t *node);
