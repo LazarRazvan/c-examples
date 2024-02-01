@@ -3,6 +3,10 @@
  * Copyright (C) 2023 Lazar Razvan.
  */
 
+#ifndef KDOUBLY_LINKED_LIST_H
+#define KDOUBLY_LINKED_LIST_H
+
+
 #include <stdbool.h>
 
 /****************************** DATA STRUCTURE *******************************/
@@ -85,3 +89,5 @@ kdlist_node_t *kdlist_pop_tail(kdlist_head_t *head);
 void kdlist_push_head(kdlist_head_t *head, kdlist_node_t *node);
 void kdlist_push_tail(kdlist_head_t *head, kdlist_node_t *node);
 void kdlist_push_after(kdlist_node_t *base, kdlist_node_t *node);
+
+#endif	// KDOUBLY_LINKED_LIST_H

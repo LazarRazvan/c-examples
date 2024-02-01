@@ -3,6 +3,10 @@
  * Copyright (C) 2022 Lazar Razvan.
  */
 
+#ifndef GRAPH_H
+#define GRAPH_H
+
+
 #include <stdbool.h>
 
 /****************************** DATA STRUCTURE ********************************/
@@ -51,3 +55,5 @@ int graph_nlength_cycles(graph_t *graph, int n);
  * Bellman-Ford.
  */
 int graph_bellman_ford(graph_t *, unsigned char, bool *);
+
+#endif	// GRAPH_H

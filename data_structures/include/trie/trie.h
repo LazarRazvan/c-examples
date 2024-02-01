@@ -3,6 +3,10 @@
  * Copyright (C) 2024 Lazar Razvan.
  */
 
+#ifndef TRIE_H
+#define TRIE_H
+
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -100,3 +104,5 @@ uint32_t trie_letter_list_to_mask(char *str);
 
 //
 void trie_print(trie_node_t *root);
+
+#endif	// TRIE_H

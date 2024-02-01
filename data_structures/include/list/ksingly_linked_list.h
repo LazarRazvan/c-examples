@@ -3,6 +3,10 @@
  * Copyright (C) 2023 Lazar Razvan.
  */
 
+#ifndef KSINGLY_LINKED_LIST_H
+#define KSINGLY_LINKED_LIST_H
+
+
 #include <stdbool.h>
 
 /****************************** DATA STRUCTURE *******************************/
@@ -82,3 +86,5 @@ void kslist_replace(kslist_head_t *head, kslist_node_t *old, kslist_node_t *new)
 
 //
 void kslist_print(kslist_head_t *head, print_cb);
+
+#endif	// KSINGLY_LINKED_LIST_H

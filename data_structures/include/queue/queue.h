@@ -5,6 +5,9 @@
  * Note that elements are not popped out from the queue array but instead two
  * pointers are increased.
  */
+#ifndef QUEUE_H
+#define QUEUE_H
+
 
 #include <stdbool.h>
 
@@ -50,3 +53,4 @@ bool queue_is_empty(queue_t *);
  */
 unsigned int queue_size(queue_t *);
 
+#endif	// QUEUE_H

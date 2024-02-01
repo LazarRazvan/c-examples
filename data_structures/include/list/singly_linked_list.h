@@ -3,6 +3,10 @@
  * Copyright (C) 2022 Lazar Razvan.
  */
 
+#ifndef SINGLY_LINKED_LIST_H
+#define SINGLY_LINKED_LIST_H
+
+
 #include <stdbool.h>
 
 /****************************** DATA STRUCTURE ********************************/
@@ -89,3 +93,5 @@ void slist_ordered_delete_duplicates(slist_t *, cmp_cb);
  */
 // Destroy list
 void slist_destroy(slist_t **head);
+
+#endif	// SINGLY_LINKED_LIST_H
