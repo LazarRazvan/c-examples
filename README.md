@@ -22,16 +22,6 @@ This folder contains different tricks allowed in C that can prove to be very use
 - null		: Hack null pointer exception (read/write on null)
 ```
 
-## Data structures
-
-Understanding the layout of structures, how can you shrink structures. Explain concepts like bit-fields strucutres and union.
-
-### What can you find here?
-
-```
-- helper	: Structures, unions and bitfields explained
-```
-
 ## Pipes
 
 Understand the use case of pipes. Anonymous pipes and named pipes
