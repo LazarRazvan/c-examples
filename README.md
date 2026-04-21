@@ -42,3 +42,9 @@ Implement a multi-threading and multi-processes ring buffer
 ```
 - ring_buffer_thread	: Ring buffer with support for multiple threads (readers/writers)
 ```
+
+## Bounded buffer
+
+The *bounded buffer* problem is a classic concurrency problem where multiple producers and consumers share a fixed-size buffer, requiring synchronization to prevent overflow and underflow. It is typically implemented using a mutex to protect shared state and condition variables (or semaphores) to block threads when the buffer is full or empty.
+
+The *weighted bounded buffer* extends this model by associating a variable “weight” with each item, so producers must wait not only for free slots but also for sufficient remaining capacity. This requires tracking both the number of items and the total weight, and using condition variables to wake threads when either constraint changes.
