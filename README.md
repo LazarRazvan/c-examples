@@ -10,6 +10,7 @@ Each subfolder is self-contained. Where a `Makefile` is present, build with `mak
 - [Pipes](#pipes)
 - [Ring buffer](#ring-buffer)
 - [Bounded buffer](#bounded-buffer)
+- [GCC attributes](#gcc-attributes)
 
 ## Tricks
 
@@ -52,3 +53,13 @@ Implement a multi-threading and multi-process ring buffer.
 The *bounded buffer* problem is a classic concurrency problem where multiple producers and consumers share a fixed-size buffer, requiring synchronization to prevent overflow and underflow. It is typically implemented using a mutex to protect shared state and condition variables (or semaphores) to block threads when the buffer is full or empty.
 
 The *weighted bounded buffer* extends this model by associating a variable "weight" with each item, so producers must wait not only for free slots but also for sufficient remaining capacity. This requires tracking both the number of items and the total weight, and using condition variables to wake threads when either constraint changes.
+
+## GCC attributes
+
+Examples of GCC-specific `__attribute__` extensions and how they affect codegen or runtime behavior.
+
+Constructors/destructors work by having GCC place a pointer to the function in the `.init_array`/`.fini_array` ELF sections instead of a normal symbol; the C runtime walks `.init_array` before calling `main()` and `.fini_array` on exit, calling each pointer in turn.
+
+| File | Description |
+| --- | --- |
+| `constructor` | Run a function before `main()` and another after it returns, using `__attribute__((constructor))` / `__attribute__((destructor))` |
