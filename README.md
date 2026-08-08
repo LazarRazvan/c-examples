@@ -60,7 +60,10 @@ Examples of GCC-specific `__attribute__` extensions and how they affect codegen 
 
 Constructors/destructors work by having GCC place a pointer to the function in the `.init_array`/`.fini_array` ELF sections instead of a normal symbol; the C runtime walks `.init_array` before calling `main()` and `.fini_array` on exit, calling each pointer in turn.
 
+`ifunc` (indirect function) marks a symbol so that, instead of pointing straight at code, it points at a resolver function. The dynamic linker calls that resolver exactly once, at load time (before `main()`), and wires every call to the symbol through the address it returns. Calling code just does `runtime()` like any normal call; the runtime-selection logic is invisible to the caller. This is the same mechanism glibc uses to pick CPU-optimized `memcpy`/`strlen` implementations.
+
 | File | Description |
 | --- | --- |
 | `constructor` | Run a function before `main()` and another after it returns, using `__attribute__((constructor))` / `__attribute__((destructor))` |
 | `fn_table` | Self-registering function table: each file uses a constructor to register its handler by name, and `main` looks handlers up and calls them by name |
+| `ifunc` | Resolve which implementation `runtime()` actually calls at load time, using `__attribute__((ifunc(...)))` and a resolver function |
