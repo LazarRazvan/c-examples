@@ -67,3 +67,4 @@ Constructors/destructors work by having GCC place a pointer to the function in t
 | `constructor` | Run a function before `main()` and another after it returns, using `__attribute__((constructor))` / `__attribute__((destructor))` |
 | `fn_table` | Self-registering function table: each file uses a constructor to register its handler by name, and `main` looks handlers up and calls them by name |
 | `ifunc` | Resolve which implementation `runtime()` actually calls at load time, using `__attribute__((ifunc(...)))` and a resolver function |
+| `ifunc_vs_fptr` | Benchmarks call overhead for a plain direct call, an `ifunc`-dispatched call, and a call through a `volatile` function pointer, using `rdtsc` and repeated trials |
